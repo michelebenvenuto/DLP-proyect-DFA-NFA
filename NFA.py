@@ -9,7 +9,6 @@ class NFA(FA):
         pass
 
     def generateDFA(self):
-        usable_state_names = list(string.ascii_uppercase)
         Dstates = set()
         Dtran = {}
         Dstates.add(epsilonClosureState(self, self.startState))
@@ -19,17 +18,17 @@ class NFA(FA):
         while(len(unmarkedStates) != 0):
             T = unmarkedStates.pop(0)
             print("Curr state: ", T)
-            stateName = usable_state_names.pop(0)
             for a in self.alphabet:
                 U = epsilonClosureSet(self,moveF(self,T, a))
                 if (U not in Dstates):
                     Dstates.add(U)
                     unmarkedStates.append(U)
-            if stateName in Dtran.keys(): 
-                Dtran[stateName][a] = U
-            else:
-                Dtran[stateName] = {}
-                Dtran[stateName][a] = U
+                if T in Dtran.keys(): 
+                    Dtran[T][a] = U
+                else:
+                    Dtran[T] = {}
+                    Dtran[T][a] = U
+                
         #Some changes to return de DFA
         DstartState = list(Dstates)[0]
         Dalphabet = self.alphabet
