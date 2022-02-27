@@ -12,6 +12,18 @@ class FA():
 
     def move(self,state, char):
         return self.transF[state][char]
+    
+    def __str__(self):
+        print("States:")
+        [print(i) for i in self.states]
+        print("Alphabet:")
+        [print(i) for i in self.alphabet]
+        print("Transition Funtion:")
+        print(self.transF)
+        print("Start State:")
+        print(self.startState)
+        print("Accpeting States:")
+        [print(i) for i in self.accpetingStates]
 
 """
 Transition function V1
