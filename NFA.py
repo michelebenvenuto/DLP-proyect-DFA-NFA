@@ -17,7 +17,6 @@ class NFA(FA):
         unmarkedStates = list(Dstates)
         while(len(unmarkedStates) != 0):
             T = unmarkedStates.pop(0)
-            print("Curr state: ", T)
             for a in self.alphabet:
                 U = epsilonClosureSet(self,moveF(self,T, a))
                 if (U not in Dstates):
@@ -30,7 +29,6 @@ class NFA(FA):
                     Dtran[T][a] = U
                 
         #Some changes to return de DFA
-        DstartState = list(Dstates)[0]
         Dalphabet = self.alphabet
         DfinalStates = set()
         for stateSet in Dstates:

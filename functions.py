@@ -9,7 +9,10 @@ def epsilonClosureState(NFA, state):
     to_check = [state]
     while len(to_check) != 0:
         currState = to_check.pop(0)
-        reachableWithEpsilon = NFA.transF[currState][epsilon]
+        try:
+            reachableWithEpsilon = NFA.transF[currState][epsilon]
+        except:
+            reachableWithEpsilon = set()
         for s in reachableWithEpsilon:
             if s not in visited:
                 to_check.append(s)
@@ -28,7 +31,18 @@ def epsilonClosureSet(NFA, T):
 def moveF(NFA, T, char):
     to_return = set()
     for state in T:
-        states = NFA.transF[state][char]
+        try:
+            states = NFA.transF[state][char]
+        except:
+            states = set()
         for s in states:
             to_return.add(s)
     return frozenset(to_return)
+
+def combineTransF(transf1, transf2):
+    newtransF = {}
+    for key in transf1:
+        newtransF[key] = transf1[key]
+    for key in transf2:
+        newtransF[key] = transf2[key]
+    return newtransF

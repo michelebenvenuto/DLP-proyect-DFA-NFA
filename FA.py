@@ -1,3 +1,4 @@
+import string
 class FA():
     def __init__(self, states ,alphabet, transF, startState, acceptingStates):
         self.states = states
@@ -13,17 +14,42 @@ class FA():
     def move(self,state, char):
         return self.transF[state][char]
     
-    def __str__(self):
+    # Clean the transition funciton of an Automata
+    # Usefull when generating a FA from another structure (NFA or regex)
+    def clean(self):
+        alphabet = list(string.ascii_uppercase)
+        curr_keys = self.transF.keys()
+        keys_to_letters = {}
+        for key in curr_keys:
+            letter = alphabet.pop(0)
+            keys_to_letters[key] = letter 
+        newTransF = {}
+        for key in curr_keys:
+            newTransF[keys_to_letters[key]] = {}
+            for char in self.transF[key].keys():
+                newTransF[keys_to_letters[key]][char] = keys_to_letters[self.transF[key][char]]
+        self.transF = newTransF
+        newStates = set()
+        for state in self.states:
+            newStates.add(keys_to_letters[state])
+        self.states = newStates
+        newAcceptingStates = set()
+        for state in self.accpetingStates:
+            newAcceptingStates.add(keys_to_letters[state])
+        self.accpetingStates = newAcceptingStates
+        self.startState = keys_to_letters[self.startState]
+
+    def show(self):
         print("States:")
-        [print(i) for i in self.states]
+        print(self.states)
         print("Alphabet:")
-        [print(i) for i in self.alphabet]
+        print(self.alphabet)
         print("Transition Funtion:")
         print(self.transF)
         print("Start State:")
         print(self.startState)
         print("Accpeting States:")
-        [print(i) for i in self.accpetingStates]
+        print(self.accpetingStates)
 
 """
 Transition function V1
