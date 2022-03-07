@@ -1,3 +1,4 @@
+
 from NFA import NFA
 from functions import epsilon, combineTransF
 
@@ -68,8 +69,87 @@ class Thomson():
         nfaA.states.add(initialSateSimbol)
         nfaA.states.add(finalStateSimbol)
         return NFA(nfaA.states, nfaA.alphabet, newTransF, initialSateSimbol, set([finalStateSimbol]))
-
     
+    #functions to create the NFA from a regex
+
+    def precedence(self,op):
+        if op == '.':
+            return 1
+        if op == '|':
+            return 2
+        if op == '*':
+            return 3
+        return 0
+
+    #create nfa form two nfas and an operation
+    def applyOp(self, a,  op, b = None):
+        if op == '.': return self.concatNFA(a,b) 
+        if op == '|': return self.orNFA(a,b)
+        if op == '*': return self.kleenNFA(a)
+    
+    def createNfafromRegex(self):
+
+        # stack to store the NFAs
+        nfas = []
+        
+        # stack to store Operators 
+
+        ops = []
+
+        i = 0
+
+        regex = self.regex
+        while i < len(regex):
+            # ignore empty spaces
+            if regex[i] == ' ':
+                i += 1
+                continue
+            
+            elif regex[i] == '(':
+                ops.append(regex[i])
+            
+            # If we read a letter check if the next char in the 
+            # regex is a letter, if it is it means there is a concat
+            # operation between the two simbols 
+            # NOTE THIS WORKS ONLY BECAUSE WE ARE ONLY READING ONE LETTER AT A TIME
+            elif regex[i].isalpha():
+                if i + 1< len(regex) and regex[i + 1].isalpha():
+                    ops.append('.')
+                nfas.append(self.simbolNFA(regex[i]))
+            
+            elif regex[i] == ')':
+                while len(ops) !=0 and ops[-1] != '(':
+                    op = ops.pop()
+                    if op == "*":
+                        nfa1 = nfas.pop()
+                        nfas.append(self.applyOp(nfa1, op))
+                    else:
+                        nfa2 = nfas.pop()
+                        nfa1 = nfas.pop()
+                        nfas.append(self.applyOp(nfa1, op, nfa2))
+                ops.pop()
+            else:
+                while (len(ops) != 0 and self.precedence(ops[-1]) >= self.precedence(regex[i])):
+                    op = ops.pop()
+                    if op == "*":
+                        nfa1 = nfas.pop()
+                        nfas.append(self.applyOp(nfa1, op))
+                    else:
+                        nfa2 = nfas.pop()
+                        nfa1 = nfas.pop()
+                        nfas.append(self.applyOp(nfa1, op, nfa2))
+                ops.append(regex[i])
+            i +=1
+        while len(ops) != 0:
+            op = ops.pop()
+            if op == "*":
+                nfa1 = nfas.pop()
+                nfas.append(self.applyOp(nfa1, op))
+            else:
+                nfa2 = nfas.pop()
+                nfa1 = nfas.pop()
+                nfas.append(self.applyOp(nfa1, op, nfa2))         
+        return nfas[-1]
 
 # thomson = Thomson("asdas")
 # nfaA = thomson.simbolNFA("a")
@@ -94,4 +174,11 @@ class Thomson():
 # dfa.clean()
 # dfa.show()
 
-    
+thomson = Thomson("(a|b)")
+nfa = thomson.createNfafromRegex()    
+nfa.show()
+dfa = nfa.generateDFA()
+dfa.clean()
+dfa.show()
+#Should accept
+
