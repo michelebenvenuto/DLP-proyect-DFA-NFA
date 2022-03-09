@@ -5,8 +5,21 @@ from functions import epsilon, combineTransF
 class Thomson():
     def __init__(self, regex):
         self.regex = regex
-        self.nextSimbol = 0    
+        self.nextSimbol = 0
+        self.parseRegex()
+
+    def parseRegex(self):
+        i = 0
+        regex = ''
+        while i < len(self.regex):
+            regex += self.regex[i]
+            if self.regex[i] !="(" and self.regex[i] != "|":
+                if i + 1< len(self.regex) and (self.regex[i + 1].isalpha() or self.regex[i + 1] == '(') :
+                    regex += "."
+            i += 1
+        self.regex = regex
     # Functions to create NFAs of the simple regular expresions 
+    
     def getSimbol(self):
         to_return = self.nextSimbol
         self.nextSimbol += 1
@@ -73,9 +86,9 @@ class Thomson():
     #functions to create the NFA from a regex
 
     def precedence(self,op):
-        if op == '.':
-            return 1
         if op == '|':
+            return 1
+        if op == '.':
             return 2
         if op == '*':
             return 3
@@ -113,8 +126,6 @@ class Thomson():
             # operation between the two simbols 
             # NOTE THIS WORKS ONLY BECAUSE WE ARE ONLY READING ONE LETTER AT A TIME
             elif regex[i].isalpha():
-                if i + 1< len(regex) and regex[i + 1].isalpha():
-                    ops.append('.')
                 nfas.append(self.simbolNFA(regex[i]))
             
             elif regex[i] == ')':
@@ -148,7 +159,8 @@ class Thomson():
             else:
                 nfa2 = nfas.pop()
                 nfa1 = nfas.pop()
-                nfas.append(self.applyOp(nfa1, op, nfa2))         
+                nfas.append(self.applyOp(nfa1, op, nfa2))
+        print(len(nfas))         
         return nfas[-1]
 
 # thomson = Thomson("asdas")
@@ -174,11 +186,20 @@ class Thomson():
 # dfa.clean()
 # dfa.show()
 
-thomson = Thomson("(a|b)")
+thomson = Thomson("(a|b)*abb")
 nfa = thomson.createNfafromRegex()    
 nfa.show()
 dfa = nfa.generateDFA()
 dfa.clean()
 dfa.show()
-#Should accept
 
+#Should accept
+print("Should accept this strings: ")
+print("aaaaaaaaaaaaabb ",dfa.simulate("aaaaaaaaaaaaabb"))
+print("aabbaaababababbbbababababb ", dfa.simulate("aabbaaababababbbbababababb"))
+print("abb", dfa.simulate("abb"))
+#Should not accept
+print("Should not accept this strings:")
+print("aab ", dfa.simulate("aab"))
+print("ab ", dfa.simulate("aab"))
+print("a ",dfa.simulate("a"))
