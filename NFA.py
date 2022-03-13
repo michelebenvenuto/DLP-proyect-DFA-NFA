@@ -6,7 +6,15 @@ import string
 #WAITING FOR THE DEFINITION OFF FUNCTIONS IN FILE functions
 class NFA(FA):    
     def simulate(self,chars):
-        pass
+        S = epsilonClosureState(self, self.startState)
+        c = 0
+        while(c<len(chars)):
+            S = epsilonClosureSet(self, moveF(self,S,chars[c]))
+            c +=1
+        if(len(S & self.accpetingStates) != 0):
+            return True
+        else:
+            return False
 
     def generateDFA(self):
         Dstates = set()

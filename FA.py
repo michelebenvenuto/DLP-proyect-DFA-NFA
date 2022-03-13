@@ -1,4 +1,5 @@
 import string
+
 class FA():
     def __init__(self, states ,alphabet, transF, startState, acceptingStates):
         self.states = states
@@ -49,7 +50,7 @@ class FA():
         print("Start State:")
         print(self.startState)
         print("Accpeting States:")
-        print(self.accpetingStates)
+        print(self.accpetingStates)       
 
 """
 Transition function V1

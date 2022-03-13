@@ -121,9 +121,6 @@ class Thomson():
             elif regex[i] == '(':
                 ops.append(regex[i])
             
-            # If we read a letter check if the next char in the 
-            # regex is a letter, if it is it means there is a concat
-            # operation between the two simbols 
             # NOTE THIS WORKS ONLY BECAUSE WE ARE ONLY READING ONE LETTER AT A TIME
             elif regex[i].isalpha():
                 nfas.append(self.simbolNFA(regex[i]))
@@ -159,47 +156,12 @@ class Thomson():
             else:
                 nfa2 = nfas.pop()
                 nfa1 = nfas.pop()
-                nfas.append(self.applyOp(nfa1, op, nfa2))
-        print(len(nfas))         
+                nfas.append(self.applyOp(nfa1, op, nfa2))      
         return nfas[-1]
-
-# thomson = Thomson("asdas")
-# nfaA = thomson.simbolNFA("a")
-# nfaB = thomson.simbolNFA("b")
-# # print("Or DFA")
-# # nfaOr = thomson.orNFA(nfaA, nfaB)
-# # dfa = nfaOr.generateDFA()
-# # dfa.clean()
-# # dfa.show()
-# print("Concat DFA")
-
-# nfaConcat = thomson.concatNFA(nfaA, nfaB)
-# nfaConcat.show()
-# dfa = nfaConcat.generateDFA()
-# dfa.clean()
-# dfa.show()
-
-# print("kleen NFA and DFA")
-# nfaKleen = thomson.kleenNFA(nfaA)
-# nfaKleen.show()
-# dfa = nfaKleen.generateDFA()
-# dfa.clean()
-# dfa.show()
 
 thomson = Thomson("(a|b)*abb")
 nfa = thomson.createNfafromRegex()    
-nfa.show()
 dfa = nfa.generateDFA()
 dfa.clean()
-dfa.show()
 
-#Should accept
-print("Should accept this strings: ")
-print("aaaaaaaaaaaaabb ",dfa.simulate("aaaaaaaaaaaaabb"))
-print("aabbaaababababbbbababababb ", dfa.simulate("aabbaaababababbbbababababb"))
-print("abb", dfa.simulate("abb"))
-#Should not accept
-print("Should not accept this strings:")
-print("aab ", dfa.simulate("aab"))
-print("ab ", dfa.simulate("aab"))
-print("a ",dfa.simulate("a"))
+
