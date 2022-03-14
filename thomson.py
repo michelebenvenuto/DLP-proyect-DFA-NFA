@@ -14,7 +14,7 @@ class Thomson():
         while i < len(self.regex):
             regex += self.regex[i]
             if self.regex[i] !="(" and self.regex[i] != "|":
-                if i + 1< len(self.regex) and (self.regex[i + 1].isalpha() or self.regex[i + 1] == '(') :
+                if i + 1< len(self.regex) and (self.regex[i + 1].isalnum() or self.regex[i + 1] == '(') :
                     regex += "."
             i += 1
         self.regex = regex
@@ -124,7 +124,7 @@ class Thomson():
                 ops.append(regex[i])
             
             # NOTE THIS WORKS ONLY BECAUSE WE ARE ONLY READING ONE LETTER AT A TIME
-            elif regex[i].isalpha():
+            elif regex[i].isalnum():
                 nfas.append(self.simbolNFA(regex[i]))
             
             elif regex[i] == ')':

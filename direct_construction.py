@@ -14,7 +14,7 @@ class Node():
         self.lastPos = pos
     
     def calculate_nullable(self):
-        if self.name.isalpha() or self.name == "#":
+        if self.name.isalnum() or self.name == "#":
             if self.name == epsilon:
                 self.nullable = True
             else:
@@ -68,7 +68,7 @@ class Tree():
     def calculate_pos(self, firstPos):
         i = 1
         for node in self.postOrder:
-            if node.name.isalpha() or node.name == "#":
+            if node.name.isalnum() or node.name == "#":
                 if node.name == epsilon:
                     node.set_first_pos(set())
                     node.set_last_pos(set())
@@ -118,7 +118,7 @@ class Tree():
         while i < len(regex):
             newregex += regex[i]
             if regex[i] !="(" and regex[i] != "|":
-                if i + 1< len(regex) and (regex[i + 1].isalpha() or regex[i + 1] == '(') :
+                if i + 1< len(regex) and (regex[i + 1].isalnum() or regex[i + 1] == '(') :
                     newregex += "."
             i += 1
         return "("+ newregex +")" + "." + "#"
@@ -126,7 +126,7 @@ class Tree():
     def build_alphabet(self):
         alphabet = set()
         for char in self.regex:
-            if char.isalpha() and char != epsilon:
+            if char.isalnum() and char != epsilon:
                 alphabet.add(char)
         return alphabet
 
@@ -161,7 +161,7 @@ class Tree():
                 ops.append(regex[i])
             
             # NOTE THIS WORKS ONLY BECAUSE WE ARE ONLY READING ONE LETTER AT A TIME
-            elif regex[i].isalpha() or regex[i] == "#":
+            elif regex[i].isalnum() or regex[i] == "#":
                 nodes.append(Node(regex[i], id))
                 id +=1
             
