@@ -90,7 +90,7 @@ class Thomson():
             return 1
         if op == '.':
             return 2
-        if op == '*':
+        if op == '*' or op =='+' or op =='?':
             return 3
         return 0
 
@@ -99,6 +99,8 @@ class Thomson():
         if op == '.': return self.concatNFA(a,b) 
         if op == '|': return self.orNFA(a,b)
         if op == '*': return self.kleenNFA(a)
+        if op == '+': return self.concatNFA(a,self.kleenNFA(a))
+        if op == '?': return self.orNFA(a,self.simbolNFA(epsilon))
     
     def createNfafromRegex(self):
 
@@ -128,7 +130,7 @@ class Thomson():
             elif regex[i] == ')':
                 while len(ops) !=0 and ops[-1] != '(':
                     op = ops.pop()
-                    if op == "*":
+                    if op == "*" or op =="+" or op =="?":
                         nfa1 = nfas.pop()
                         nfas.append(self.applyOp(nfa1, op))
                     else:
@@ -139,7 +141,7 @@ class Thomson():
             else:
                 while (len(ops) != 0 and self.precedence(ops[-1]) >= self.precedence(regex[i])):
                     op = ops.pop()
-                    if op == "*":
+                    if op == "*"or op =="+" or op =="?":
                         nfa1 = nfas.pop()
                         nfas.append(self.applyOp(nfa1, op))
                     else:
@@ -150,7 +152,7 @@ class Thomson():
             i +=1
         while len(ops) != 0:
             op = ops.pop()
-            if op == "*":
+            if op == "*"or op =="+" or op =="?":
                 nfa1 = nfas.pop()
                 nfas.append(self.applyOp(nfa1, op))
             else:

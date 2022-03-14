@@ -6,12 +6,10 @@ class DFA(FA):
         s = self.startState
         for i in range(len(chars)):
             c = chars[i]
+            if c not in self.alphabet:
+                return False
             s = self.move(s,c)
         if s in self.accpetingStates:
             return True
         else:
             return False
-    def graph(self, path):
-        dfa = SimpleDFA(self.states, self.alphabet,self.startState, self.accpetingStates,self.transF)
-        digraph = dfa.to_graphviz()
-        digraph.render(path) 

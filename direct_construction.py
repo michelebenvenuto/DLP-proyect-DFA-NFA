@@ -15,9 +15,10 @@ class Node():
     
     def calculate_nullable(self):
         if self.name.isalpha() or self.name == "#":
-            self.nullable = False
-        elif self.name == epsilon:
-            self.nullable =True
+            if self.name == epsilon:
+                self.nullable = True
+            else:
+                self.nullable = False
         elif self.name == '*':
             self.nullable = True
         elif self.name == '|':
@@ -68,8 +69,14 @@ class Tree():
         i = 1
         for node in self.postOrder:
             if node.name.isalpha() or node.name == "#":
-                node.set_first_pos(set([i]))
-                node.set_last_pos(set([i]))
+                if node.name == epsilon:
+                    node.set_first_pos(set())
+                    node.set_last_pos(set())
+                else:
+                    if firstPos:
+                        node.set_first_pos(set([i]))
+                    else:
+                        node.set_last_pos(set([i]))
                 i+=1
             elif node.name == '|':
                 child1 = node.childs[0]
@@ -93,8 +100,10 @@ class Tree():
                         node.set_last_pos(child2.lastPos) 
             elif node.name == '*':
                 child = node.childs[0]
-                node.set_first_pos(child.firstPos)
-                node.set_last_pos(child.lastPos) 
+                if firstPos:
+                    node.set_first_pos(child.firstPos)
+                else:
+                    node.set_last_pos(child.lastPos) 
 
     def post_order(self,root, res=[]):
         if root:
@@ -102,7 +111,7 @@ class Tree():
                 self.post_order(child, res)
                 res.append(child)
         return res
-
+    
     def build_augmented_regex(self,regex):
         i = 0
         newregex = ''
@@ -117,7 +126,7 @@ class Tree():
     def build_alphabet(self):
         alphabet = set()
         for char in self.regex:
-            if char.isalpha():
+            if char.isalpha() and char != epsilon:
                 alphabet.add(char)
         return alphabet
 
@@ -126,7 +135,7 @@ class Tree():
             return 1
         if op == '.':
             return 2
-        if op == '*':
+        if op == '*' or op =='+' or op =='?':
             return 3
         return 0
 
@@ -164,6 +173,17 @@ class Tree():
                         newNode = Node(op, id,[node1])
                         id += 1
                         nodes.append(newNode)
+                    elif op == "+":
+                        node1 = nodes.pop()
+                        kleen_node = Node('*',id,[node1])
+                        id +=1
+                        nodes.append(Node('.',id,[node1, kleen_node]))
+                    elif op == "?":
+                        node1 = nodes.pop()
+                        epsilon_node = Node(epsilon, id, [])
+                        id +=1
+                        nodes.append(Node("|",id,[node1, epsilon_node]))
+                        id +=1
                     else:
                         node2 = nodes.pop()
                         node1 = nodes.pop()
@@ -178,7 +198,15 @@ class Tree():
                         node1 = nodes.pop()
                         nodes.append(Node(op, id ,[node1]))
                         id += 1
-
+                    elif op == "+":
+                        node1 = nodes.pop()
+                        kleen_node = Node('*',id,[node1])
+                        id +=1
+                        nodes.append(Node('.',id,[node1, kleen_node]))
+                    elif op == "?":
+                        node1 = nodes.pop()
+                        nodes.append(Node("|",id,[node1, epsilon]))
+                        id +=1
                     else:
                         node2 = nodes.pop()
                         node1 = nodes.pop()
@@ -192,7 +220,15 @@ class Tree():
                 node1 = nodes.pop()
                 nodes.append(Node(op, id,[node1]))
                 id += 1
-                
+            elif op == "+":
+                node1 = nodes.pop()
+                kleen_node = Node('*',id,[node1])
+                id +=1
+                nodes.append(Node('.',id,[node1, kleen_node]))
+            elif op == "?":
+                node1 = nodes.pop()
+                nodes.append(Node("|",id,[node1, epsilon]))
+                id +=1
             else:
                 node2 = nodes.pop()
                 node1 = nodes.pop()
@@ -204,9 +240,10 @@ class Tree():
 
     def get_pos_of_simbol(self,simbol):
         result = set()
-        for node in self.postOrder:
-            if node.name == simbol:
-                result.add(list(node.firstPos)[0])
+        if simbol != epsilon:
+            for node in self.postOrder:
+                if node.name == simbol:
+                    result.add(list(node.firstPos)[0])
         return result
     
     def generate_DFA(self):

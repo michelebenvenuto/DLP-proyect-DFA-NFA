@@ -1,5 +1,5 @@
 import string
-
+import graphviz
 class FA():
     def __init__(self, states ,alphabet, transF, startState, acceptingStates):
         self.states = states
@@ -51,6 +51,20 @@ class FA():
         print(self.startState)
         print("Accpeting States:")
         print(self.accpetingStates)       
+    
+    def render(self, path):
+        graph = graphviz.Digraph('Render of Finite Automata', format= "png")
+        for state in self.states:
+            if state in self.accpetingStates:
+                graph.node(str(state), shape = 'doublecircle')
+            else:
+                graph.node(str(state))
+        for node in self.transF.keys():
+            for char in self.transF[node].keys():
+                goesTo = self.transF[node][char]
+                for item in goesTo:
+                    graph.edge(str(node), str(item), label=char)
+        graph.render(path)
 
 """
 Transition function V1
