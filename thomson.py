@@ -159,9 +159,4 @@ class Thomson():
                 nfas.append(self.applyOp(nfa1, op, nfa2))      
         return nfas[-1]
 
-thomson = Thomson("(a|b)*abb")
-nfa = thomson.createNfafromRegex()    
-dfa = nfa.generateDFA()
-dfa.clean()
-
 

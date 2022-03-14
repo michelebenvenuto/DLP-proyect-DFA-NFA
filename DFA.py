@@ -11,7 +11,7 @@ class DFA(FA):
             return True
         else:
             return False
-    def graph(self):
+    def graph(self, path):
         dfa = SimpleDFA(self.states, self.alphabet,self.startState, self.accpetingStates,self.transF)
         digraph = dfa.to_graphviz()
-        digraph.render("dfa-render") 
+        digraph.render(path) 

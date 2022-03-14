@@ -74,8 +74,10 @@ class Tree():
             elif node.name == '|':
                 child1 = node.childs[0]
                 child2 = node.childs[1]
-                node.set_first_pos(child1.firstPos | child2.firstPos)
-                node.set_last_pos(child1.lastPos | child2.lastPos)
+                if firstPos:
+                    node.set_first_pos(child1.firstPos | child2.firstPos)
+                else:
+                    node.set_last_pos(child1.lastPos | child2.lastPos)
             elif node.name == '.':
                 child1 = node.childs[0]
                 child2 = node.childs[1]
@@ -85,7 +87,6 @@ class Tree():
                     else:
                         node.set_first_pos(child1.firstPos)
                 else:
-                    print(child2.nullable)
                     if child2.nullable:
                         node.set_last_pos(child1.lastPos | child2.lastPos)
                     else:
@@ -246,17 +247,3 @@ def display_tree(root ,i = 0):
     for node in root.childs:
         print(" "*(i+2)+ str(node))
         display_tree(node, i + 2)
-
-
-
-tree = Tree("(a|b)*abb")
-tree.build_tree()
-root = tree.root
-for i in tree.postOrder:
-    print(i)
-    print(i.nullable)
-    print(i.firstPos, i.lastPos)
-print(tree.positions)
-dfa = tree.generate_DFA()
-dfa.clean()
-dfa.graph()
