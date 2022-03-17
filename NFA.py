@@ -1,20 +1,22 @@
+from tracemalloc import start
 from DFA import DFA
 from FA import FA
 from functions import *
 import string
-
+import time
 #WAITING FOR THE DEFINITION OFF FUNCTIONS IN FILE functions
 class NFA(FA):    
     def simulate(self,chars):
+        start_time = time.time()
         S = epsilonClosureState(self, self.startState)
         c = 0
         while(c<len(chars)):
             S = epsilonClosureSet(self, moveF(self,S,chars[c]))
             c +=1
         if(len(S & self.accpetingStates) != 0):
-            return True
+            return True, (time.time() - start_time)
         else:
-            return False
+            return False, (time.time() - start_time)
 
     def generateDFA(self):
         Dstates = set()

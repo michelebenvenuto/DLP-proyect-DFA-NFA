@@ -55,6 +55,8 @@ class FA():
     def render(self, path):
         graph = graphviz.Digraph('Render of Finite Automata', format= "png")
         for state in self.states:
+            if state == self.startState:
+                graph.node(str(state), color = "red")
             if state in self.accpetingStates:
                 graph.node(str(state), shape = 'doublecircle')
             else:
