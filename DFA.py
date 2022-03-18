@@ -8,7 +8,7 @@ class DFA(FA):
         for i in range(len(chars)):
             c = chars[i]
             if c not in self.alphabet:
-                return False
+                return False, (time.time() - start_time)
             s = self.move(s,c)
         if s in self.accpetingStates:
             return True, (time.time() - start_time)

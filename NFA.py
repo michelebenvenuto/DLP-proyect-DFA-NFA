@@ -11,6 +11,8 @@ class NFA(FA):
         S = epsilonClosureState(self, self.startState)
         c = 0
         while(c<len(chars)):
+            if chars[c] not in self.alphabet:
+                return False, (time.time() - start_time)
             S = epsilonClosureSet(self, moveF(self,S,chars[c]))
             c +=1
         if(len(S & self.accpetingStates) != 0):
